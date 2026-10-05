@@ -1,0 +1,5 @@
+DROP TABLE IF EXISTS schedule_exercises;
+DROP TABLE IF EXISTS schedule_days;
+DROP TABLE IF EXISTS schedules;
+DROP TABLE IF EXISTS exercises;
+DROP TABLE IF EXISTS users;

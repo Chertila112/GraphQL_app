@@ -1,0 +1,188 @@
+scalar Time
+scalar UUID
+
+enum MuscleGroup {
+    CHEST
+    BACK
+    LEGS
+    SHOULDERS
+    BICEPS
+    TRICEPS
+    CORE
+}
+
+enum Equipment {
+    BARBELL
+    DUMBBELL
+    BODYWEIGHT
+    MACHINE
+    CABLE
+}
+
+type Exercise {
+    id: UUID!
+    name: String!
+    description: String
+    muscleGroup: MuscleGroup!
+    equipment: Equipment
+    createdAt: Time!
+    updatedAt: Time!
+}
+
+type User {
+    id: UUID!
+    username: String!
+    email: String!
+    firstName: String
+    lastName: String
+    dateOfBirth: Time
+    createdAt: Time!
+    schedule: Schedule
+}
+
+type Schedule {
+    id: UUID!
+    userId: UUID!
+    name: String!
+    isActive: Boolean!
+    createdAt: Time!
+    updatedAt: Time!
+    days: [ScheduleDay!]!
+}
+
+type ScheduleDay {
+    id: UUID!
+    scheduleId: UUID!
+    dayOfWeek: Int!
+    isRestDay: Boolean!
+    notes: String
+    exercises: [ScheduleExercise!]!
+}
+
+type ScheduleExercise {
+    id: UUID!
+    scheduleDayId: UUID!
+    exerciseId: UUID!
+    exercise: Exercise! 
+    position: Int!
+    sets: Int
+    reps: Int
+    weight: Float
+    rest: Int 
+    duration: Int 
+    notes: String
+}
+
+input NewUser {
+    username: String!
+    email: String!
+    password: String! 
+    firstName: String
+    lastName: String
+    dateOfBirth: Time
+}
+
+input UpdateUser {
+    username: String
+    email: String
+    password: String
+    firstName: String
+    lastName: String
+    dateOfBirth: Time
+}
+
+input NewExercise {
+    name: String!
+    description: String
+    muscleGroup: MuscleGroup!
+    equipment: Equipment
+}
+
+input UpdateExercise {
+    name: String
+    description: String
+    muscleGroup: MuscleGroup
+    equipment: Equipment
+}
+
+input NewSchedule {
+    userId: UUID!
+    name: String!
+}
+
+input UpdateSchedule {
+    name: String
+    isActive: Boolean
+}
+
+input UpdateScheduleDay {
+    dayOfWeek: Int
+    isRestDay: Boolean
+    notes: String
+}
+
+input NewScheduleExercise {
+    scheduleDayId: UUID!
+    exerciseId: UUID!
+    position: Int!
+    sets: Int
+    reps: Int
+    weight: Float
+    rest: Int
+    duration: Int
+    notes: String
+}
+
+input UpdateScheduleExercise {
+    position: Int
+    sets: Int
+    reps: Int
+    weight: Float
+    rest: Int
+    duration: Int
+    notes: String
+}
+
+type Query {
+    me: User! 
+    user(id: UUID!): User
+    users: [User!]!
+
+    exercise(id: UUID!): Exercise
+    exercises(muscleGroup: MuscleGroup, equipment: Equipment): [Exercise!]!
+
+    schedule(id: UUID!): Schedule
+    scheduleByUser(userId: UUID!): Schedule  
+    schedules: [Schedule!]!
+
+    scheduleDay(id: UUID!): ScheduleDay
+    scheduleDays(scheduleId: UUID!): [ScheduleDay!]!
+}
+
+type Mutation {
+    createUser(input: NewUser!): User!
+    updateUser(id: UUID!, input: UpdateUser!): User!
+    deleteUser(id: UUID!): Boolean!
+
+    createExercise(input: NewExercise!): Exercise!
+    updateExercise(id: UUID!, input: UpdateExercise!): Exercise!
+    deleteExercise(id: UUID!): Boolean!
+
+    createSchedule(input: NewSchedule!): Schedule!
+    updateSchedule(id: UUID!, input: UpdateSchedule!): Schedule!
+    deleteSchedule(id: UUID!): Boolean!
+
+    updateScheduleDay(id: UUID!, input: UpdateScheduleDay!): ScheduleDay!
+
+    addExerciseToDay(input: NewScheduleExercise!): ScheduleExercise!
+    updateScheduleExercise(
+        id: UUID!
+        input: UpdateScheduleExercise!
+    ): ScheduleExercise!
+    removeExerciseFromDay(id: UUID!): Boolean!
+}
+
+
+type Subscription {
+    scheduleUpdated(userId: UUID!): Schedule!
+}
